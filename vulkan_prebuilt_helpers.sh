@@ -16,8 +16,8 @@ function download_linux() {
 
 function install_linux() {
   test -d $VULKAN_SDK && test -f vulkan_sdk.tar.gz
-  echo "extract just the SDK's prebuilt binaries ($VULKAN_SDK_VERSION/x86_64) from vulkan_sdk_.tar.gz into $VULKAN_SDK" >&2
-  tar -C "$VULKAN_SDK" --strip-components 2 -xf vulkan_sdk_.tar.gz $VULKAN_SDK_VERSION/x86_64
+  echo "extract just the SDK's prebuilt binaries ($VULKAN_SDK_VERSION/x86_64) from vulkan_sdk.tar.gz into $VULKAN_SDK" >&2
+  tar -C "$VULKAN_SDK" --strip-components 2 -xf vulkan_sdk.tar.gz $VULKAN_SDK_VERSION/x86_64
 }
 
 function download_windows() {
