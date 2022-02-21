@@ -47,14 +47,14 @@ runs:
       run: |
         # download
         . $GITHUB_ACTION_PATH/vulkan_prebuilt_helpers.sh
-        download_${VULKAN_SDK_PLATFORM}
+        download_vulkan_installer ${VULKAN_SDK_PLATFORM}
 
     - name: Install Vulkan SDK
       shell: bash
       run: |
         # install
         . $GITHUB_ACTION_PATH/vulkan_prebuilt_helpers.sh
-        install_${VULKAN_SDK_PLATFORM}
+        unpack_vulkan_installer ${VULKAN_SDK_PLATFORM}
 
     - name: Cleanup Vulkan SDK download file
       if: inputs.cache == 'false'
