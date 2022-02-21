@@ -9,7 +9,9 @@
 # $ VULKAN_SDK=$PWD/VULKAN_SDK install_linux       # installs
 
 function download_linux() {
+  local url=https://sdk.lunarg.com/sdk/download/$VULKAN_SDK_VERSION/linux/vulkan_sdk.tar.gz?Human=true
   test -f vulkan_sdk.tar.gz || curl -s -L -o vulkan_sdk.tar.gz https://sdk.lunarg.com/sdk/download/$VULKAN_SDK_VERSION/linux/vulkan_sdk.tar.gz?Human=true
+  echo url=$url ; ls -l vulkan_sdk.tar.gz ; test -f vulkan_sdk.tar.gz
 }
 
 function install_linux() {
@@ -20,6 +22,7 @@ function install_linux() {
 
 function download_windows() {
   test -f vulkan_sdk.exe || curl -s -L -o vulkan_sdk.exe https://sdk.lunarg.com/sdk/download/$VULKAN_SDK_VERSION/windows/vulkan_sdk.exe?Human=true
+  test -f vulkan_sdk.exe
 }
 
 function install_windows() {
@@ -30,6 +33,7 @@ function install_windows() {
 
 function download_mac() {
   test -f vulkan_sdk.dmg || curl -s -L -o vulkan_sdk.dmg https://sdk.lunarg.com/sdk/download/$VULKAN_SDK_VERSION/mac/vulkan_sdk.dmg?Human=true
+  test -f vulkan_sdk.dmg
 }
 
 function install_mac() {

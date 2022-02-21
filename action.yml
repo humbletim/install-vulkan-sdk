@@ -18,6 +18,7 @@ runs:
     - name: Preset environment variables
       shell: bash
       run: |
+        # preset env
         basedir=$PWD
         runner_os=${RUNNER_OS:-`uname -s`}
         case $runner_os in
@@ -44,12 +45,14 @@ runs:
     - name: Download Vulkan SDK
       shell: bash
       run: |
+        # download
         . $GITHUB_ACTION_PATH/vulkan_prebuilt_helpers.sh
         download_${VULKAN_SDK_PLATFORM}
 
     - name: Install Vulkan SDK
       shell: bash
       run: |
+        # install
         . $GITHUB_ACTION_PATH/vulkan_prebuilt_helpers.sh
         install_${VULKAN_SDK_PLATFORM}
 
@@ -57,6 +60,7 @@ runs:
       if: inputs.cache == 'false'
       shell: bash
       run: |
+        # cleanup
         rm -v vulkan_sdk.* || true
 
     - name: Verify Vulkan SDK binary
