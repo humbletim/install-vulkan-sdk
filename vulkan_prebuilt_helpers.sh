@@ -28,7 +28,6 @@ function download_windows() {
 function install_windows() {
   test -d $VULKAN_SDK && test -f vulkan_sdk.exe
   7z x vulkan_sdk.exe -aoa -o$VULKAN_SDK
-  rm -v vulkan_sdk.exe
 }
 
 function download_mac() {
@@ -51,5 +50,4 @@ function install_mac() {
   cp -r $sdk_temp/macOS/* $VULKAN_SDK/
   hdiutil detach $mountpoint
   sudo rm -rf "$sdk_temp"
-  rm -v vulkan_sdk.dmg
 }
