@@ -1,0 +1,126 @@
+name: test install-vulkan-sdk
+on:
+  push:
+  workflow_dispatch:
+      inputs:
+        extra_tests:
+          description: 'Enable additional CI tests'
+          required: false
+          default: false
+jobs:
+  setup-all-matrix:
+    if: ${{ github.event.inputs.extra_tests == 'true' || github.event.inputs.extra_tests == 'matrix' }}
+    strategy:
+      matrix:
+        os: [ ubuntu-latest, windows-latest, macos-latest ]
+    runs-on: ${{ matrix.runs-on }}
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ./
+        with:
+          version: 1.3.204.0
+          cache: true
+      - name: Test Vulkan SDK Install
+        shell: bash
+        run: |
+          echo "Vulkan SDK Version=='$VULKAN_SDK_VERSION'"
+          echo "VULKAN_SDK=='$VULKAN_SDK'"
+          test -n "$VULKAN_SDK_VERSION"
+          glslangValidator --version
+          cmake -B tests/build -S tests -DCMAKE_BUILD_TYPE=Release -DCMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE=.
+          cmake --build tests/build --config release
+          ./tests/build/test_vulkan
+
+  test-prebuilt-windows:
+    if: ${{ contains(github.event.inputs.extra_tests, 'prebuilt-windows') }}
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ./
+        with:
+          version: 1.2.198.1
+          cache: false
+      - name: Smoke test Vulkan SDK
+        shell: bash
+        run: |
+          echo VULKAN_SDK=$VULKAN_SDK
+          echo VULKAN_SDK_VERSION=$VULKAN_SDK_VERSION
+          glslangValidator --version
+          spirv-cfg --version
+          spirv-cross --help 2>&1 | head -1
+          glslc --version
+          du -hsc $VULKAN_SDK/*
+          find $VULKAN_SDK -size +50M | xargs ls -lrth
+      - name: Test compiling against Vulkan SDK
+        shell: cmd
+        run: |
+          echo "Vulkan SDK Version=='%VULKAN_SDK_VERSION%'"
+          echo "VULKAN_SDK=='%VULKAN_SDK%'"
+          if "%VULKAN_SDK_VERSION%"=="" exit 1
+          cmake -B tests/build -S tests -DCMAKE_BUILD_TYPE=Release -DCMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE=. || exit /b 2
+          cmake --build tests/build --config release || exit /b 3
+          dir .\tests\build\test_vulkan.exe
+          echo testing...
+          set PATH=%PATH%;%VULKAN_SDK%/Bin
+          .\tests\build\test_vulkan || true || exit /b 4
+
+  test-prebuilt-linux:
+    if: ${{ contains(github.event.inputs.extra_tests, 'prebuilt-linux') }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ./
+        with:
+          version: 1.2.198.1
+          cache: false
+      - name: Smoke test Vulkan SDK
+        shell: bash
+        run: |
+          echo VULKAN_SDK=$VULKAN_SDK
+          echo VULKAN_SDK_VERSION=$VULKAN_SDK_VERSION
+          glslangValidator --version
+          spirv-cfg --version
+          spirv-cross --help 2>&1 | head -1
+          glslc --version
+          du -hsc $VULKAN_SDK/*
+          find $VULKAN_SDK -size +50M | xargs ls -lrth
+      - name: Test compiling against Vulkan SDK Install
+        shell: bash
+        run: |
+          echo "Vulkan SDK Version=='$VULKAN_SDK_VERSION'"
+          echo "VULKAN_SDK=='$VULKAN_SDK'"
+          glslangValidator --version
+          test -n "$VULKAN_SDK_VERSION"
+          cmake -B tests/build -S tests -DCMAKE_BUILD_TYPE=Release -DCMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE=.
+          cmake --build tests/build --config release
+          ./tests/build/test_vulkan
+
+  test-prebuilt-macos:
+    if: ${{ contains(github.event.inputs.extra_tests, 'prebuilt-mac') }}
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ./
+        with:
+          version: 1.2.198.1
+          cache: false
+      - name: Smoke test Vulkan SDK
+        shell: bash
+        run: |
+          echo VULKAN_SDK=$VULKAN_SDK
+          echo VULKAN_SDK_VERSION=$VULKAN_SDK_VERSION
+          glslangValidator --version
+          spirv-cfg --version
+          spirv-cross --help 2>&1 | head -1
+          glslc --version
+          du -hsc $VULKAN_SDK/*
+          find $VULKAN_SDK -size +50M | xargs ls -lrth
+      - name: Test compiling against Vulkan SDK Install
+        shell: bash
+        run: |
+          echo "Vulkan SDK Version=='$VULKAN_SDK_VERSION'"
+          echo "VULKAN_SDK=='$VULKAN_SDK'"
+          test -n "$VULKAN_SDK_VERSION"
+          cmake -B tests/build -S tests -DCMAKE_BUILD_TYPE=Release -DCMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE=.
+          cmake --build tests/build --config release
+          ./tests/build/test_vulkan

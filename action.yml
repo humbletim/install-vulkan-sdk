@@ -1,0 +1,71 @@
+name: 'Install Vulkan SDK'
+description: 'Automatically downloads and installs prebuilt Vulkan SDK releases.'
+branding:
+  icon: 'play'
+  color: 'red'
+inputs:
+  version:
+    description: 'official Vulkan SDK release version to use'
+    default: ''
+    required: true
+  cache:
+    description: 'whether to cache the downloaded vulkan_sdk.* installer file (using github actions/cache)'
+    default: false
+    required: false
+runs:
+  using: "composite"
+  steps:
+    - name: Preset environment variables
+      shell: bash
+      run: |
+        basedir=$PWD
+        runner_os=${RUNNER_OS:-`uname -s`}
+        case $runner_os in
+          macOS|Darwin) os=mac ;;
+          Linux) os=linux ;;
+          Windows|MINGW*) os=windows ; basedir=$(pwd -W) ;;
+          *) echo "unknown runner_os: $runner_os" ; exit 7 ; ;;
+        esac
+        test -d $basedir/VULKAN_SDK || mkdir -v $basedir/VULKAN_SDK
+        (
+          echo VULKAN_SDK=$basedir/VULKAN_SDK
+          echo VULKAN_SDK_VERSION=${{ inputs.version }}
+          echo VULKAN_SDK_PLATFORM=$os
+        ) | tee -a $GITHUB_ENV
+
+    - name: Check Vulkan SDK installer cache
+      id: vulkan-cached-sdk
+      if: inputs.use-cache != 'false'
+      uses: actions/cache@v2
+      with:
+        path: vulkan_sdk.*
+        key: ${{ runner.os }}-vulkan-prebuilt-sdk-${{ inputs.cache }}-${{ inputs.version }}
+
+    - name: Download Vulkan SDK
+      shell: bash
+      run: |
+        . $GITHUB_ACTION_PATH/vulkan_prebuilt_helpers.sh
+        download_${VULKAN_SDK_PLATFORM}
+
+    - name: Install Vulkan SDK
+      shell: bash
+      run: |
+        . $GITHUB_ACTION_PATH/vulkan_prebuilt_helpers.sh
+        install_${VULKAN_SDK_PLATFORM}
+
+    - name: Cleanup Vulkan SDK download file
+      if: inputs.cache == 'false'
+      shell: bash
+      run: |
+        rm -v vulkan_sdk.* || true
+
+    - name: Verify Vulkan SDK binary
+      shell: bash
+      run: |
+        $VULKAN_SDK/bin/glslangValidator --version
+
+    - name: Export bin/ PATH to environment
+      shell: bash
+      run: |
+        echo ${VULKAN_SDK}/bin | tee -a $GITHUB_PATH
+        du -hs ${VULKAN_SDK}
