@@ -1,4 +1,4 @@
-# install-vulkan-sdk v1
+# install-vulkan-sdk v1.1
 
 [![test install-vulkan-sdk](https://github.com/humbletim/install-vulkan-sdk/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/humbletim/install-vulkan-sdk/actions/workflows/ci.yml)
 
@@ -8,14 +8,14 @@ This action automatically downloads and installs the Vulkan SDK development envi
 
 ```yaml
   -name: Install Vulkan SDK
-   uses: humbletim/install-vulkan-sdk@v1
+   uses: humbletim/install-vulkan-sdk@v1.1
    with:
      version: 1.3.204.0
      cache: true
 ```
 
 Parameters:
-- *version* (required): N.N.N.N style Vulkan SDK release number.
+- *version* (required): `N.N.N.N` style Vulkan SDK release number (or `latest` to use most recent official release).
 - *cache* (optional; default=false): boolean indicating whether to cache the downloaded installer file between builds.
 
 ### SDK Revisions

@@ -27,10 +27,18 @@ runs:
           Windows|MINGW*) os=windows ; basedir=$(pwd -W) ;;
           *) echo "unknown runner_os: $runner_os" ; exit 7 ; ;;
         esac
-        test -d $basedir/VULKAN_SDK || mkdir -v $basedir/VULKAN_SDK
+        version=${VULKAN_SDK_VERSION:-${{ inputs.version }}}
+        sdk_dir=${VULKAN_SDK:-$basedir/VULKAN_SDK}
+        test -d $sdk_dir || mkdir -pv $sdk_dir
+        if [[ $version == 'latest' ]] ; then
+          url=https://vulkan.lunarg.com/sdk/latest/$os.txt
+          echo "note: resolving '$version' for '$os' via webservices lookup: $url" >&2
+          version=$(curl -sL https://vulkan.lunarg.com/sdk/latest/$os.txt)
+          test -n "$version" || { echo "could not resolve latest version" ; exit 9 ; }
+        fi
         (
-          echo VULKAN_SDK=$basedir/VULKAN_SDK
-          echo VULKAN_SDK_VERSION=${{ inputs.version }}
+          echo VULKAN_SDK=$sdk_dir
+          echo VULKAN_SDK_VERSION=$version
           echo VULKAN_SDK_PLATFORM=$os
         ) | tee -a $GITHUB_ENV
 
@@ -40,7 +48,7 @@ runs:
       uses: actions/cache@v2
       with:
         path: vulkan_sdk.*
-        key: ${{ runner.os }}-vulkan-prebuilt-sdk-${{ inputs.cache }}-${{ inputs.version }}
+        key: ${{ runner.os }}-vulkan-prebuilt-sdk-${{ inputs.cache }}-${{ env.VULKAN_SDK_VERSION }}
 
     - name: Download Vulkan SDK
       shell: bash
