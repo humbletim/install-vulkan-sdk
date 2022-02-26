@@ -67,6 +67,7 @@ function install_mac() {
     true # <= 1.2.170.0 .dmgs are just packaged folders
   fi
   du -hs $sdk_temp
+  test -d $sdk_temp/macOS || { echo "unrecognized dmg folder layout: $sdk_temp" ; ls -l $sdk_temp ; exit 10 ; }
   cp -r $sdk_temp/macOS/* $VULKAN_SDK/
   if [[ -d $mountpoint/InstallVulkan.app ]] ; then
     sudo rm -rf "$sdk_temp"
