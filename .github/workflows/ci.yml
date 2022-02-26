@@ -15,6 +15,10 @@ on:
           description: 'Matrix OSes'
           required: true
           default: '[ "ubuntu-latest", "windows-latest", "macos-latest" ]'
+        quiet:
+          description: 'silence annotation'
+          required: false
+          default: false
 jobs:
   setup-all-matrix:
     if: ${{ github.event.inputs.extra_tests == 'true' || github.event.inputs.extra_tests == 'matrix' }}
@@ -29,6 +33,7 @@ jobs:
         with:
           version: ${{ matrix.version }}
           cache: true
+          quiet: ${{ github.event.inputs.quiet }}
       - name: Test Vulkan SDK Install
         shell: bash
         run: |

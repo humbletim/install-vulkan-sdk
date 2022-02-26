@@ -15,7 +15,7 @@ This action automatically downloads and installs the Vulkan SDK development envi
 ```
 
 Parameters:
-- *version* (required): `N.N.N.N` style Vulkan SDK release number (or `latest` to use most recent official release).
+- *version* (optional; default=latest): `N.N.N.N` style Vulkan SDK release number (or `latest` to use most recent official release).
 - *cache* (optional; default=false): boolean indicating whether to cache the downloaded installer file between builds.
 - *quiet* (optional; default=false): when using `latest` an Annotation is added to builds with actual SDK number; set `quiet: true` to silence.
 
