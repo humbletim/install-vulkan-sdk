@@ -12,6 +12,10 @@ inputs:
     description: 'whether to cache the downloaded vulkan_sdk.* installer file (using github actions/cache)'
     default: false
     required: false
+  quiet:
+    description: 'silence GitHub Annotation notice displayed if resolving `latest` into Vulkan SDK release number'
+    default: false
+    required: false
 runs:
   using: "composite"
   steps:
@@ -33,8 +37,9 @@ runs:
         if [[ $version == 'latest' ]] ; then
           url=https://vulkan.lunarg.com/sdk/latest/$os.txt
           echo "note: resolving '$version' for '$os' via webservices lookup: $url" >&2
-          version=$(curl -sL https://vulkan.lunarg.com/sdk/latest/$os.txt)
+          version=$(curl -sL $url)
           test -n "$version" || { echo "could not resolve latest version" ; exit 9 ; }
+          [[ "${{ inputs.quiet }}" == "true" ]] || echo "::notice title=Using Vulkan SDK $version::resolved via '$url'"
         fi
         (
           echo VULKAN_SDK=$sdk_dir
@@ -44,7 +49,7 @@ runs:
 
     - name: Check Vulkan SDK installer cache
       id: vulkan-cached-sdk
-      if: inputs.use-cache != 'false'
+      if: inputs.cache != 'false'
       uses: actions/cache@v2
       with:
         path: vulkan_sdk.*

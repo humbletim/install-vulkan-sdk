@@ -1,4 +1,4 @@
-# install-vulkan-sdk v1.1
+# install-vulkan-sdk v1.1.1
 
 [![test install-vulkan-sdk](https://github.com/humbletim/install-vulkan-sdk/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/humbletim/install-vulkan-sdk/actions/workflows/ci.yml)
 
@@ -8,7 +8,7 @@ This action automatically downloads and installs the Vulkan SDK development envi
 
 ```yaml
   -name: Install Vulkan SDK
-   uses: humbletim/install-vulkan-sdk@v1.1
+   uses: humbletim/install-vulkan-sdk@v1.1.1
    with:
      version: 1.3.204.0
      cache: true
@@ -17,6 +17,7 @@ This action automatically downloads and installs the Vulkan SDK development envi
 Parameters:
 - *version* (required): `N.N.N.N` style Vulkan SDK release number (or `latest` to use most recent official release).
 - *cache* (optional; default=false): boolean indicating whether to cache the downloaded installer file between builds.
+- *quiet* (optional; default=false): when using `latest` an Annotation is added to builds with actual SDK number; set `quiet: true` to silence.
 
 ### SDK Revisions
 
@@ -25,6 +26,12 @@ Several recent SDK releases (known to have installers available for all three wi
 - 1.2.189.0
 - 1.2.198.1
 - 1.3.204.0
+
+##### Tested SDK versions (as of 2022.02.26):
+  - <sub><sup>[windows.json](https://vulkan.lunarg.com/sdk/versions/windows.json): 1.3.204.0 / 1.2.198.1 / 1.2.189.2 / 1.2.189.0 / 1.2.182.0 / 1.2.176.1 / 1.2.170.0 / 1.2.162.1 / 1.2.162.0 / 1.2.154.1 / 1.2.148.1 / 1.2.148.0</sup></sub>
+  - <sub><sup>[linux.json](https://vulkan.lunarg.com/sdk/versions/linux.json): 1.3.204.0 / 1.2.198.1 / 1.2.189.0 / 1.2.182.0 / 1.2.176.1 / 1.2.170.0 / 1.2.162.1 / 1.2.162.0 / 1.2.148.1 / 1.2.148.0</sup></sub>
+  - <sub><sup>[mac.json](https://vulkan.lunarg.com/sdk/versions/mac.json): 1.3.204.0 / 1.2.198.1 / 1.2.189.0 / 1.2.182.0 / 1.2.176.1 / 1.2.170.0 / 1.2.162.1 / 1.2.162.0 / 1.2.148.1 / 1.2.148.0</sup></sub>
+</sup></sub>
 
 Additional release numbers can be found at https://vulkan.lunarg.com/sdk/home.
 
