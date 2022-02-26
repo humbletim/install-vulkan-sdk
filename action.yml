@@ -45,7 +45,7 @@ runs:
 
     - name: Check Vulkan SDK installer cache
       id: vulkan-cached-sdk
-      if: inputs.use-cache != 'false'
+      if: inputs.cache != 'false'
       uses: actions/cache@v2
       with:
         path: vulkan_sdk.*
