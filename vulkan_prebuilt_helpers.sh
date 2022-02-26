@@ -64,7 +64,7 @@ function install_mac() {
     sdk_temp=$VULKAN_SDK.tmp
     sudo $mountpoint/InstallVulkan.app/Contents/MacOS/InstallVulkan --root "$sdk_temp" --accept-licenses --default-answer --confirm-command install
   else
-    # <= 1.2.170.0 .dmgs are just packaged folders
+    true # <= 1.2.170.0 .dmgs are just packaged folders
   fi
   du -hs $sdk_temp
   cp -r $sdk_temp/macOS/* $VULKAN_SDK/
