@@ -58,10 +58,18 @@ function install_mac() {
     echo "could not mount dmg image: vulkan_sdk.exe (mountpoint=$mountpoint)" >&2
     exit 7
   fi
-  local sdk_temp=$VULKAN_SDK.tmp
-  sudo $mountpoint/InstallVulkan.app/Contents/MacOS/InstallVulkan --root "$sdk_temp" --accept-licenses --default-answer --confirm-command install
+  local sdk_temp=$mountpoint
+  # > Vulkan SDK 1.2.170.0 .dmgs have an installer
+  if [[ test -d $mountpoint/InstallVulkan.app ]] ; then
+    sdk_temp=$VULKAN_SDK.tmp
+    sudo $mountpoint/InstallVulkan.app/Contents/MacOS/InstallVulkan --root "$sdk_temp" --accept-licenses --default-answer --confirm-command install
+  else
+    # <= 1.2.170.0 .dmgs are just packaged folders
+  fi
   du -hs $sdk_temp
   cp -r $sdk_temp/macOS/* $VULKAN_SDK/
+  if [[ test -d $mountpoint/InstallVulkan.app ]] ; then
+    sudo rm -rf "$sdk_temp"
+  fi
   hdiutil detach $mountpoint
-  sudo rm -rf "$sdk_temp"
 }

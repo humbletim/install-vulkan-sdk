@@ -35,6 +35,7 @@ runs:
           echo "note: resolving '$version' for '$os' via webservices lookup: $url" >&2
           version=$(curl -sL https://vulkan.lunarg.com/sdk/latest/$os.txt)
           test -n "$version" || { echo "could not resolve latest version" ; exit 9 ; }
+          echo "::notice title=Vulkan SDK::Resolved 'latest' into '$version'"
         fi
         (
           echo VULKAN_SDK=$sdk_dir
