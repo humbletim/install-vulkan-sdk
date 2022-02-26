@@ -6,7 +6,7 @@ branding:
 inputs:
   version:
     description: 'official Vulkan SDK release version to use'
-    default: ''
+    default: 'latest'
     required: true
   cache:
     description: 'whether to cache the downloaded vulkan_sdk.* installer file (using github actions/cache)'
