@@ -60,7 +60,7 @@ function install_mac() {
   fi
   local sdk_temp=$mountpoint
   # > Vulkan SDK 1.2.170.0 .dmgs have an installer
-  if [[ test -d $mountpoint/InstallVulkan.app ]] ; then
+  if [[ -d $mountpoint/InstallVulkan.app ]] ; then
     sdk_temp=$VULKAN_SDK.tmp
     sudo $mountpoint/InstallVulkan.app/Contents/MacOS/InstallVulkan --root "$sdk_temp" --accept-licenses --default-answer --confirm-command install
   else
@@ -68,7 +68,7 @@ function install_mac() {
   fi
   du -hs $sdk_temp
   cp -r $sdk_temp/macOS/* $VULKAN_SDK/
-  if [[ test -d $mountpoint/InstallVulkan.app ]] ; then
+  if [[ -d $mountpoint/InstallVulkan.app ]] ; then
     sudo rm -rf "$sdk_temp"
   fi
   hdiutil detach $mountpoint
