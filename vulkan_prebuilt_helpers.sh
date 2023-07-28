@@ -55,7 +55,7 @@ function install_mac() {
   if [[ -d $mountpoint ]] ; then
     echo "mounted dmg image: 'vulkan_sdk.dmg' (mountpoint=$mountpoint)" >&2
   else
-    echo "could not mount dmg image: vulkan_sdk.exe (mountpoint=$mountpoint)" >&2
+    echo "could not mount dmg image: vulkan_sdk.dmg (mountpoint=$mountpoint)" >&2
     exit 7
   fi
   local sdk_temp=$mountpoint
