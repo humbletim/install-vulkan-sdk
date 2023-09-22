@@ -17,10 +17,6 @@ function _os_filename() {
   esac
 }
 
-function exists_and_megabytes(() {
-  
-}
-
 function download_vulkan_installer() {
   local os=$1
   local filename=$(_os_filename $os)
