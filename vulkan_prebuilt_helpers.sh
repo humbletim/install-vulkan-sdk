@@ -25,7 +25,7 @@ function download_vulkan_installer() {
   if [[ -f $filename ]] ; then
     echo "using cached: $filename"
   else
-    curl -s -L -o $filename $url || { echo "curl error code: $?" >&2 ; curl -v -L --head $url >&2 ; exit 28 ; }
+    curl --fail-with-body -s -L -o $filename $url || { echo "curl error code: $?" >&2 ; curl -v -L --head $url >&2 ; exit 28 ; }
     test -f $filename
   fi
   ls -lh $filename >&2
