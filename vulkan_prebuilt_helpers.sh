@@ -17,16 +17,21 @@ function _os_filename() {
   esac
 }
 
+function exists_and_megabytes(() {
+  
+}
+
 function download_vulkan_installer() {
   local os=$1
   local filename=$(_os_filename $os)
   local url=https://sdk.lunarg.com/sdk/download/$VULKAN_SDK_VERSION/$os/$filename?Human=true
   echo "_download_os_installer $os $filename $url" >&2
-  if [[ -f $filename ]] ; then
-    echo "using cached: $filename"
+  if [[ -f $filename && $(stat -c %s $filename) -gt 1048576 ]] ; then
+    echo "using cached: $filename" >&2
   else
-    curl --fail-with-body -s -L -o $filename $url || { echo "curl error code: $?" >&2 ; curl -v -L --head $url >&2 ; exit 28 ; }
+    curl --fail-with-body -s -L -o $filename $url || { echo "curl failed with error code: $?" >&2 ; curl -s -L --head $url >&2 ; exit 32 ; }
     test -f $filename
+    test $(stat -c %s $filename) -gt 1048576
   fi
   ls -lh $filename >&2
 }
