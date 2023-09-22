@@ -51,7 +51,7 @@ function install_windows() {
 
 function install_mac() {
   test -d $VULKAN_SDK && test -f vulkan_sdk.dmg
-  local mountpoint=$(hdiutil attach vulkan_sdk.dmg | grep vulkansdk | awk 'END {print $NF}')
+  local mountpoint=$(hdiutil attach vulkan_sdk.dmg | grep -i vulkansdk | awk 'END {print $NF}')
   if [[ -d $mountpoint ]] ; then
     echo "mounted dmg image: 'vulkan_sdk.dmg' (mountpoint=$mountpoint)" >&2
   else
