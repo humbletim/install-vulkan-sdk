@@ -22,12 +22,12 @@ function download_vulkan_installer() {
   local filename=$(_os_filename $os)
   local url=https://sdk.lunarg.com/sdk/download/$VULKAN_SDK_VERSION/$os/$filename?Human=true
   echo "_download_os_installer $os $filename $url" >&2
-  if [[ -f $filename && $(stat -c %s $filename) -gt 1048576 ]] ; then
+  if [[ -f $filename ]] ; then
     echo "using cached: $filename" >&2
   else
-    curl --fail-with-body -s -L -o $filename $url || { echo "curl failed with error code: $?" >&2 ; curl -s -L --head $url >&2 ; exit 32 ; }
-    test -f $filename
-    test $(stat -c %s $filename) -gt 1048576
+    curl --fail-with-body -s -L -o ${filename}.tmp $url || { echo "curl failed with error code: $?" >&2 ; curl -s -L --head $url >&2 ; exit 32 ; }
+    test -f ${filename}.tmp
+    mv -v ${filename}.tmp ${filename} 
   fi
   ls -lh $filename >&2
 }
