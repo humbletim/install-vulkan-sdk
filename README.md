@@ -1,4 +1,4 @@
-# install-vulkan-sdk v1.1.1
+# install-vulkan-sdk v1.1.2
 
 [![test install-vulkan-sdk](https://github.com/humbletim/install-vulkan-sdk/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/humbletim/install-vulkan-sdk/actions/workflows/ci.yml)
 
