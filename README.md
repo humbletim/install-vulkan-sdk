@@ -10,7 +10,7 @@ This action automatically downloads and installs the Vulkan SDK development envi
   -name: Install Vulkan SDK
    uses: humbletim/install-vulkan-sdk@v1.1.2
    with:
-     version: 1.3.204.0
+     version: 1.3.204.1
      cache: true
 ```
 
@@ -25,16 +25,15 @@ TODO: re-run bulk version screening tests...
 ### SDK Revisions
 
 Several recent SDK releases (known to have installers available for all three windows/mac/linux platforms):
-- 1.2.170.0
-- 1.2.189.0
 - 1.2.198.1
-- 1.3.204.0
+- 1.3.204.1
+- 1.3.250.1
 
-##### Tested SDK versions (as of 2022.10.23):
-  - <sub><sup>[windows.json](https://vulkan.lunarg.com/sdk/versions/windows.json): 1.3.204.0 / 1.2.198.1 / 1.2.189.2 / 1.2.189.0 / 1.2.182.0 / 1.2.176.1 / 1.2.170.0 / 1.2.162.1 / 1.2.162.0 / 1.2.154.1 / 1.2.148.1 / 1.2.148.0</sup></sub>
-  - <sub><sup>[linux.json](https://vulkan.lunarg.com/sdk/versions/linux.json): 1.3.204.0 / 1.2.198.1 / 1.2.189.0 / 1.2.182.0 / 1.2.176.1 / 1.2.170.0 / 1.2.162.1 / 1.2.162.0 / 1.2.148.1 / 1.2.148.0</sup></sub>
-  - <sub><sup>[mac.json](https://vulkan.lunarg.com/sdk/versions/mac.json): 1.3.204.0 / 1.2.198.1 / 1.2.189.0 / 1.2.182.0 / 1.2.176.1 / 1.2.170.0 / 1.2.162.1 / 1.2.162.0 / 1.2.148.1 / 1.2.148.0</sup></sub>
-</sup></sub>
+##### Available SDK versions (as of 2023.09.22):
+  - <sub><sup>[windows.json](https://vulkan.lunarg.com/sdk/versions/windows.json):  1.3.261.1 / 1.3.250.1 / 1.3.243.0 / 1.3.239.0 / 1.3.236.0 / 1.3.231.1 / 1.3.224.1 / 1.3.216.0 / 1.3.211.0 / 1.3.204.1 / 1.2.198.1 / 1.2.189.2 / 1.2.189.0 / 1.2.182.0</sup></sub>
+  - <sub><sup>[linux.json](https://vulkan.lunarg.com/sdk/versions/linux.json): 1.3.261.1 / 1.3.250.1 / 1.3.243.0 / 1.3.239.0 / 1.3.236.0 / 1.3.231.2 / 1.3.231.1 / 1.3.224.1 / 1.3.216.0 / 1.3.211.0 / 1.3.204.1 / 1.2.198.1 / 1.2.189.0 / 1.2.182.0</sup></sub>
+  - <sub><sup>[mac.json](https://vulkan.lunarg.com/sdk/versions/mac.json): 1.3.261.1 / 1.3.250.1 / 1.3.243.0 / 1.3.239.0 / 1.3.236.0 / 1.3.231.1 / 1.3.224.1 / 1.3.216.0 / 1.3.211.0 / 1.3.204.1 / 1.2.198.1 / 1.2.189.0 / 1.2.182.0</sup></sub>
+
 -->
 
 Additional release numbers can be found at https://vulkan.lunarg.com/sdk/home.

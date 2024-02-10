@@ -23,10 +23,11 @@ function download_vulkan_installer() {
   local url=https://sdk.lunarg.com/sdk/download/$VULKAN_SDK_VERSION/$os/$filename?Human=true
   echo "_download_os_installer $os $filename $url" >&2
   if [[ -f $filename ]] ; then
-    echo "using cached: $filename"
+    echo "using cached: $filename" >&2
   else
-    curl -s -L -o $filename $url
-    test -f $filename
+    curl --fail-with-body -s -L -o ${filename}.tmp $url || { echo "curl failed with error code: $?" >&2 ; curl -s -L --head $url >&2 ; exit 32 ; }
+    test -f ${filename}.tmp
+    mv -v ${filename}.tmp ${filename} 
   fi
   ls -lh $filename >&2
 }
@@ -51,11 +52,11 @@ function install_windows() {
 
 function install_mac() {
   test -d $VULKAN_SDK && test -f vulkan_sdk.dmg
-  local mountpoint=$(hdiutil attach vulkan_sdk.dmg | grep vulkansdk | awk 'END {print $NF}')
+  local mountpoint=$(hdiutil attach vulkan_sdk.dmg | grep -i vulkansdk | awk 'END {print $NF}')
   if [[ -d $mountpoint ]] ; then
     echo "mounted dmg image: 'vulkan_sdk.dmg' (mountpoint=$mountpoint)" >&2
   else
-    echo "could not mount dmg image: vulkan_sdk.exe (mountpoint=$mountpoint)" >&2
+    echo "could not mount dmg image: vulkan_sdk.dmg (mountpoint=$mountpoint)" >&2
     exit 7
   fi
   local sdk_temp=$mountpoint
