@@ -22,7 +22,7 @@ jobs:
           libx11-xcb-dev liblz4-dev libzstd-dev \
           libxml2-dev wayland-protocols -y --no-install-recommends
       - name: Download SDK
-        run: curl -o vulkan-sdk.tar.gz https://sdk.lunarg.com/sdk/download/latest/linux/vulkan-sdk.tar.xz
+        run: curl -o vulkan-sdk.tar.xz https://sdk.lunarg.com/sdk/download/latest/linux/vulkan-sdk.tar.xz
       - name: Unpack SDK
         run: tar -xJf vulkan-sdk.tar.xz
       - name: Remove x86_64
