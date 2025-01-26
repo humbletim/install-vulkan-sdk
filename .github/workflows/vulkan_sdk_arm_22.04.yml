@@ -1,17 +1,19 @@
-name: Build-SDK 22.04
+name: Build-SDK 24.04
 on: push
 
 jobs:
   build-linux-arm:
-    name: Build SDK for Linux 22.04 arm64
-    runs-on: ubuntu-22.04-arm
+    name: Build SDK for Linux 24.04 arm64
+    runs-on: ubuntu-24.04-arm
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
       - name: Update APT
         run:  sudo apt update
       - name: Install Host Dependencies
-        run: sudo apt install cmake ninja-build gcc-12 g++-12 bison python3-distutils ocaml-core xz-utils pkg-config
+        run: sudo apt install cmake ninja-build gcc-14 g++-14 bison ocaml-core xz-utils pkg-config python3-pip
+      - name: Install python
+        run: pip3 install setuptools wheel
       - name: Install Target Dependencies
         run: | 
           sudo apt install libglm-dev libxcb-dri3-0 libxcb-present0 libpciaccess0 \
@@ -30,7 +32,7 @@ jobs:
       - name: Build SDK
         run: |
           cd `find . -maxdepth 1 -type d -name '1.*' -print -quit`
-          CC=/usr/bin/aarch64-linux-gnu-gcc-12 CXX=/usr/bin/aarch64-linux-gnu-g++-12 ./vulkansdk --maxjobs vulkan-loader vulkan-validationlayers vulkan-extensionlayer 
+          CC=/usr/bin/aarch64-linux-gnu-gcc-14 CXX=/usr/bin/aarch64-linux-gnu-g++-14 ./vulkansdk --maxjobs vulkan-loader vulkan-validationlayers vulkan-extensionlayer
       - name: Package SDK as tar.xz
         run: |
           tar -cJf vulkan-sdk-arm64.tar.xz `find . -maxdepth 1 -type d -name '1.*' -print -quit`
@@ -39,5 +41,3 @@ jobs:
         with:
           name: vulkan-sdk-arm64
           path: vulkan-sdk-arm64.tar.xz
-          
-          
