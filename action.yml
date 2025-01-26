@@ -34,6 +34,12 @@ runs:
         version=${VULKAN_SDK_VERSION:-${{ inputs.version }}}
         sdk_dir=${VULKAN_SDK:-$basedir/VULKAN_SDK}
         test -d $sdk_dir || mkdir -pv $sdk_dir
+
+        runner_arch=$(uname -m)
+        is_arm_linux=false
+        if [[ "$os" == "linux" && "$runner_arch" == "aarch64" ]]; then
+          is_arm_linux=true
+        fi
         if [[ $version == 'latest' ]] ; then
           url=https://vulkan.lunarg.com/sdk/latest/$os.txt
           echo "note: resolving '$version' for '$os' via webservices lookup: $url" >&2
@@ -45,6 +51,7 @@ runs:
           echo VULKAN_SDK=$sdk_dir
           echo VULKAN_SDK_VERSION=$version
           echo VULKAN_SDK_PLATFORM=$os
+          echo IS_ARM_LINUX=$is_arm_linux
         ) | tee -a $GITHUB_ENV
 
     - name: Check Vulkan SDK installer cache
@@ -57,20 +64,56 @@ runs:
 
     - name: Download Vulkan SDK
       shell: bash
+      if: env.IS_ARM_LINUX != 'true'
       run: |
         # download
         . $GITHUB_ACTION_PATH/vulkan_prebuilt_helpers.sh
         download_vulkan_installer ${VULKAN_SDK_PLATFORM}
 
+    - name: Download Vulkan SDK ARM Artifact
+      shell: bash
+      if: env.IS_ARM_LINUX == 'true'
+      run: |
+        echo "Downloading Vulkan SDK ARM Artifact"
+        ARTIFACT_NAME=""
+        if [[ "${{ runner.os }}" == "ubuntu-22.04-arm" ]]; then
+          ARTIFACT_NAME="Vulkan-SDK-22.04_ARM"
+        elif [[ "${{ runner.os }}" == "ubuntu-24.04-arm" ]]; then
+          ARTIFACT_NAME="Vulkan-SDK-24.04_ARM"
+        else
+          echo "Unsupported ARM Linux runner OS: ${{ runner.os }}"
+          exit 1
+        fi
+        echo "Artifact name: $ARTIFACT_NAME"
+        mkdir -p vulkan_sdk_artifact
+        echo "Downloading artifact '$ARTIFACT_NAME' to vulkan_sdk_artifact"
+      uses: actions/download-artifact@v4
+      if: env.IS_ARM_LINUX == 'true'
+      with:
+        name: ${{ env.ARTIFACT_NAME }} # Use environment variable here
+        path: vulkan_sdk_artifact
+
     - name: Install Vulkan SDK
       shell: bash
+      if: env.IS_ARM_LINUX != 'true'
       run: |
         # install
         . $GITHUB_ACTION_PATH/vulkan_prebuilt_helpers.sh
         unpack_vulkan_installer ${VULKAN_SDK_PLATFORM}
 
+    - name: Install Vulkan SDK ARM from Artifact
+      shell: bash
+      if: env.IS_ARM_LINUX == 'true'
+      run: |
+        echo "Installing Vulkan SDK ARM from Artifact"
+        rm -rf "$VULKAN_SDK" # Ensure clean install dir
+        mkdir -p "$VULKAN_SDK"
+        cp -r vulkan_sdk_artifact/* "$VULKAN_SDK" # Copy artifact content to SDK dir
+        du -hs "$VULKAN_SDK"
+        find "$VULKAN_SDK" -depth -print # List files for debugging
+
     - name: Cleanup Vulkan SDK download file
-      if: inputs.cache == 'false'
+      if: inputs.cache == 'false' && env.IS_ARM_LINUX != 'true' # Only cleanup non-ARM downloads
       shell: bash
       run: |
         # cleanup
