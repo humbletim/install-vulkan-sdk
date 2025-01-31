@@ -1,4 +1,4 @@
-# install-vulkan-sdk v1.1.1
+# install-vulkan-sdk v1.2.0
 
 [![test install-vulkan-sdk](https://github.com/humbletim/install-vulkan-sdk/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/humbletim/install-vulkan-sdk/actions/workflows/ci.yml)
 
@@ -8,9 +8,9 @@ This action automatically downloads and installs the Vulkan SDK development envi
 
 ```yaml
   -name: Install Vulkan SDK
-   uses: humbletim/install-vulkan-sdk@v1.1.1
+   uses: humbletim/install-vulkan-sdk@v1.2.0
    with:
-     version: 1.3.204.1
+     version: 1.4.304.0
      cache: true
 ```
 
@@ -25,11 +25,12 @@ Several recent SDK releases (known to have installers available for all three wi
 - 1.2.198.1
 - 1.3.204.1
 - 1.3.250.1
+- 1.4.304.0
 
 ##### Available SDK versions (as of 2023.09.22):
-  - <sub><sup>[windows.json](https://vulkan.lunarg.com/sdk/versions/windows.json):  1.3.261.1 / 1.3.250.1 / 1.3.243.0 / 1.3.239.0 / 1.3.236.0 / 1.3.231.1 / 1.3.224.1 / 1.3.216.0 / 1.3.211.0 / 1.3.204.1 / 1.2.198.1 / 1.2.189.2 / 1.2.189.0 / 1.2.182.0</sup></sub>
-  - <sub><sup>[linux.json](https://vulkan.lunarg.com/sdk/versions/linux.json): 1.3.261.1 / 1.3.250.1 / 1.3.243.0 / 1.3.239.0 / 1.3.236.0 / 1.3.231.2 / 1.3.231.1 / 1.3.224.1 / 1.3.216.0 / 1.3.211.0 / 1.3.204.1 / 1.2.198.1 / 1.2.189.0 / 1.2.182.0</sup></sub>
-  - <sub><sup>[mac.json](https://vulkan.lunarg.com/sdk/versions/mac.json): 1.3.261.1 / 1.3.250.1 / 1.3.243.0 / 1.3.239.0 / 1.3.236.0 / 1.3.231.1 / 1.3.224.1 / 1.3.216.0 / 1.3.211.0 / 1.3.204.1 / 1.2.198.1 / 1.2.189.0 / 1.2.182.0</sup></sub>
+  - <sub><sup>[windows.json](https://vulkan.lunarg.com/sdk/versions/windows.json):  1.4.304.0 / 1.3.261.1 / 1.3.250.1 / 1.3.243.0 / 1.3.239.0 / 1.3.236.0 / 1.3.231.1 / 1.3.224.1 / 1.3.216.0 / 1.3.211.0 / 1.3.204.1 / 1.2.198.1 / 1.2.189.2 / 1.2.189.0 / 1.2.182.0</sup></sub>
+  - <sub><sup>[linux.json](https://vulkan.lunarg.com/sdk/versions/linux.json): 1.4.304.0 / 1.3.261.1 / 1.3.250.1 / 1.3.243.0 / 1.3.239.0 / 1.3.236.0 / 1.3.231.2 / 1.3.231.1 / 1.3.224.1 / 1.3.216.0 / 1.3.211.0 / 1.3.204.1 / 1.2.198.1 / 1.2.189.0 / 1.2.182.0</sup></sub>
+  - <sub><sup>[mac.json](https://vulkan.lunarg.com/sdk/versions/mac.json): 1.4.304.0 / 1.3.261.1 / 1.3.250.1 / 1.3.243.0 / 1.3.239.0 / 1.3.236.0 / 1.3.231.1 / 1.3.224.1 / 1.3.216.0 / 1.3.211.0 / 1.3.204.1 / 1.2.198.1 / 1.2.189.0 / 1.2.182.0</sup></sub>
 </sup></sub>
 
 Additional release numbers can be found at https://vulkan.lunarg.com/sdk/home.
@@ -47,6 +48,7 @@ Exported variables:
 Please be aware that Vulkan SDKs can use a lot of disk space -- recently reported 1.3.204.0 installation sizes:
   - windows: 617M
   - linux: 631M
+  - linux Arm64: 631M
   - mac: 1.8G (1.3G of that being `lib/libshaderc_combined.a`)
 
 If your project only depends on Vulkan-Headers and Vulkan-Loader to compile and link against then you may want to consider using [humbletim/setup-vulkan-sdk](https://github.com/humbletim/setup-vulkan-sdk) instead, which allows building individual SDK components directly from Khronos source repos (and uses less disk space).

@@ -27,8 +27,21 @@ runs:
         runner_os=${RUNNER_OS:-`uname -s`}
         case $runner_os in
           macOS|Darwin) os=mac ;;
-          Linux) os=linux ;;
-          Windows|MINGW*) os=windows ; basedir=$(pwd -W) ;;
+          Linux)
+            os=linux
+            arch=$(uname -m)
+            if [[ "$arch" == "aarch64" || "$arch" == "arm64" ]]; then
+              os=linux-arm
+            fi
+            ;;
+          Windows|MINGW*)
+            os=windows
+            basedir=$(pwd -W)
+            arch=$(uname -m)
+            if [[ "$arch" == "aarch64" || "$arch" == "arm64" ]]; then
+              echo "Warning: Windows ARM is not fully tested for Vulkan SDK install." >&2
+            fi
+            ;;
           *) echo "unknown runner_os: $runner_os" ; exit 7 ; ;;
         esac
         version=${VULKAN_SDK_VERSION:-${{ inputs.version }}}
@@ -47,16 +60,31 @@ runs:
           echo VULKAN_SDK_PLATFORM=$os
         ) | tee -a $GITHUB_ENV
 
+    - name: Download Vulkan SDK Artifact (Linux ARM)
+      if: env.VULKAN_SDK_PLATFORM == 'linux-arm'
+      uses: actions/download-artifact@v4
+      with:
+        name: vulkan-sdk-arm64
+        path: .
+
+    - name: Rename ARM Artifact to vulkan_sdk.tar.xz
+      if: env.VULKAN_SDK_PLATFORM == 'linux-arm'
+      shell: bash
+      run: |
+        # Rename the downloaded ARM SDK tarball to the expected filename
+        mv vulkansdk-linux-arm64-*.tar.xz vulkan_sdk.tar.xz || echo "No ARM artifact found, check filename."
+
     - name: Check Vulkan SDK installer cache
       id: vulkan-cached-sdk
-      if: inputs.cache != 'false'
+      if: inputs.cache != 'false' && env.VULKAN_SDK_PLATFORM != 'linux-arm' # Skip cache for linux-arm (artifact)
       uses: actions/cache@v4
       with:
         path: vulkan_sdk.*
         key: ${{ runner.os }}-vulkan-prebuilt-sdk-${{ inputs.cache }}-${{ env.VULKAN_SDK_VERSION }}
 
-    - name: Download Vulkan SDK
+    - name: Download Vulkan SDK Installer
       shell: bash
+      if: env.VULKAN_SDK_PLATFORM != 'linux-arm' # Skip download for linux-arm (artifact)
       run: |
         # download
         . $GITHUB_ACTION_PATH/vulkan_prebuilt_helpers.sh
@@ -70,7 +98,7 @@ runs:
         unpack_vulkan_installer ${VULKAN_SDK_PLATFORM}
 
     - name: Cleanup Vulkan SDK download file
-      if: inputs.cache == 'false'
+      if: inputs.cache == 'false' && env.VULKAN_SDK_PLATFORM != 'linux-arm' # Skip cleanup for linux-arm (artifact)
       shell: bash
       run: |
         # cleanup
