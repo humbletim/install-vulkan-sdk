@@ -86,3 +86,4 @@ jobs:
         with:
           name: vulkansdk-linux-arm64-${{ matrix.os }}-${{ env.SDK_VERSION }}
           path: vulkansdk-linux-arm64-${{ matrix.os }}-${{ env.SDK_VERSION }}
+          retention-days: 30

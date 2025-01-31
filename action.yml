@@ -16,6 +16,10 @@ inputs:
     description: 'silence GitHub Annotation notice displayed if resolving `latest` into Vulkan SDK release number'
     default: false
     required: false
+  use_arm_artifact:
+    description: 'Use prebuilt ARM artifacts from GitHub Actions'
+    default: false
+    required: false
 runs:
   using: "composite"
   steps:

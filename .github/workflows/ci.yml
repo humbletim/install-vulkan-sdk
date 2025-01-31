@@ -1,24 +1,30 @@
 name: test install-vulkan-sdk
+
 on:
   push:
   workflow_dispatch:
-      inputs:
-        extra_tests:
-          description: 'Enable additional CI tests'
-          required: false
-          default: false
-        versions:
-          description: 'Vulkan SDK Versions'
-          required: true
-          default: '[ "1.4.304.0" ]'
-        oses:
-          description: 'Matrix OSes'
-          required: true
-          default: '[ "ubuntu-latest", "ubuntu-24.04-arm", "ubuntu-22.04-arm", "windows-latest", "macos-15", "macos-12" ]'
-        quiet:
-          description: 'silence annotation'
-          required: false
-          default: false
+    inputs:
+      extra_tests:
+        description: "Enable additional CI tests"
+        required: false
+        default: false
+      versions:
+        description: "Vulkan SDK Versions"
+        required: true
+        default: '[ "1.4.304.0" ]'
+      oses:
+        description: "Matrix OSes"
+        required: true
+        default: '[ "ubuntu-latest", "ubuntu-24.04-arm", "ubuntu-22.04-arm", "windows-latest", "macos-15", "macos-12" ]'
+      quiet:
+        description: "Silence annotation"
+        required: false
+        default: false
+      use_arm_artifact:
+        description: "Use prebuilt ARM artifacts"
+        type: boolean
+        default: true
+
 jobs:
   setup-all-matrix:
     if: ${{ github.event.inputs.extra_tests == 'true' || github.event.inputs.extra_tests == 'matrix' }}
@@ -28,12 +34,37 @@ jobs:
         version: ${{ fromJSON(github.event.inputs.versions) }}
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v4
+      - name: Check for ARM Artifact
+        if: ${{ matrix.os contains 'arm' && inputs.use_arm_artifact }}
+        id: check-arm
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { data } = await github.rest.actions.listArtifactsForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              name: `vulkansdk-linux-arm64-${process.env.RUNNER_OS}-${process.env.VERSION}`
+            });
+            return data.artifacts.length > 0 ? 'exists' : 'not-found';
+
+      - name: Download ARM Artifact
+        if: ${{ steps.check-arm.outputs.result == 'exists' }}
+        uses: actions/download-artifact@v4
+        with:
+          name: vulkansdk-linux-arm64-${{ matrix.os }}-${{ env.VULKAN_SDK_VERSION }}
+
+      - name: Build ARM SDK
+        if: ${{ steps.check-arm.outputs.result == 'not-found' && matrix.os contains 'arm' }}
+        uses: ./.github/workflows/ubuntu-arm.yml
+        with:
+          version: ${{ env.VULKAN_SDK_VERSION }}
+
       - uses: ./
         with:
           version: ${{ matrix.version }}
           cache: true
-          quiet: ${{ github.event.inputs.quiet }}
+          use_arm_artifact: ${{ inputs.use_arm_artifact }}
+
       - name: Test Vulkan SDK Install
         shell: bash
         run: |
@@ -102,7 +133,6 @@ jobs:
         run: |
           echo "Vulkan SDK Version=='$VULKAN_SDK_VERSION'"
           echo "VULKAN_SDK=='$VULKAN_SDK'"
-          glslangValidator --version
           test -n "$VULKAN_SDK_VERSION"
           cmake -B tests/build -S tests -DCMAKE_BUILD_TYPE=Release -DCMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE=.
           cmake --build tests/build --config release
