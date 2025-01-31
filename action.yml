@@ -64,8 +64,15 @@ runs:
       if: env.VULKAN_SDK_PLATFORM == 'linux-arm'
       uses: actions/download-artifact@v4
       with:
-        name: vulkan-sdk-arm64 # Replace with your artifact name if different
+        name: vulkan-sdk-arm64
         path: .
+
+    - name: Rename ARM Artifact to vulkan_sdk.tar.xz
+      if: env.VULKAN_SDK_PLATFORM == 'linux-arm'
+      shell: bash
+      run: |
+        # Rename the downloaded ARM SDK tarball to the expected filename
+        mv vulkansdk-linux-arm64-*.tar.xz vulkan_sdk.tar.xz || echo "No ARM artifact found, check filename."
 
     - name: Check Vulkan SDK installer cache
       id: vulkan-cached-sdk
