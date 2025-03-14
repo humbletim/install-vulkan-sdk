@@ -12,6 +12,10 @@ inputs:
     description: 'whether to cache the downloaded vulkan_sdk.* installer file (using github actions/cache)'
     default: false
     required: false
+  cache_version:
+    description: 'specify N for actions-cache/vN (defensive future-proofing for deprecation warnings)'
+    default: 4
+    required: false
   quiet:
     description: 'silence GitHub Annotation notice displayed if resolving `latest` into Vulkan SDK release number'
     default: false
@@ -50,7 +54,7 @@ runs:
     - name: Check Vulkan SDK installer cache
       id: vulkan-cached-sdk
       if: inputs.cache != 'false'
-      uses: actions/cache@v4
+      uses: actions/cache@v${{ inputs.cache_version }}
       with:
         path: vulkan_sdk.*
         key: ${{ runner.os }}-vulkan-prebuilt-sdk-${{ inputs.cache }}-${{ env.VULKAN_SDK_VERSION }}
