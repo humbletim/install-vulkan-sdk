@@ -61,8 +61,7 @@ function install_mac() {
     unzip -t vulkan_sdk.zip
     exit 7
   fi
-  local sdk_tmp=${VULKAN_SDK}.tmp
-  mkdir -pv $sdk_temp
+  local sdk_temp=${VULKAN_SDK}.tmp
   sudo InstallVulkan-${VULKAN_SDK_VERSION}.app/Contents/MacOS/InstallVulkan-${VULKAN_SDK_VERSION} --root "$sdk_temp" --accept-licenses --default-answer --confirm-command install
   du -hs $sdk_temp
   test -d $sdk_temp/macOS || { echo "unrecognized dmg folder layout: $sdk_temp" ; ls -l $sdk_temp ; exit 10 ; }
