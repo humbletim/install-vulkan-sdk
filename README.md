@@ -1,7 +1,5 @@
 # install-vulkan-sdk v1.1.2
 
-[![test install-vulkan-sdk](https://github.com/humbletim/install-vulkan-sdk/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/humbletim/install-vulkan-sdk/actions/workflows/ci.yml)
-
 This action automatically downloads and installs the Vulkan SDK development environment.
 
 ### Usage
@@ -27,7 +25,7 @@ Know working SDK version for windows/mac/linux:
 ##### Available SDK versions:
   - [windows.json](https://vulkan.lunarg.com/sdk/versions/windows.json)
   - [linux.json](https://vulkan.lunarg.com/sdk/versions/linux.json)
-  - [mac.json](https://vulkan.lunarg.com/sdk/versions/mac.json)
+  - [mac.json](https://vulkan.lunarg.com/sdk/versions/mac.json) (version >= 1.3.296.0)
   - see also https://vulkan.lunarg.com/sdk/home
 
 ### Environment
