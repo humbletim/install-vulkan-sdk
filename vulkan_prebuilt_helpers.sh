@@ -10,7 +10,7 @@
 
 function _os_filename() {
   case $1 in
-    mac) echo vulkan_sdk.dmg ;;
+    mac) echo vulkan_sdk.zip ;;
     linux) echo vulkan_sdk.tar.gz ;;
     windows) echo vulkan_sdk.exe ;;
     *) echo "unknown $1" >&2 ; exit 9 ;;
@@ -51,29 +51,23 @@ function install_windows() {
 }
 
 function install_mac() {
-  test -d $VULKAN_SDK && test -f vulkan_sdk.dmg
-  local mountpoint=$(hdiutil attach vulkan_sdk.dmg | grep -i vulkansdk | awk 'END {print $NF}')
-  if [[ -d $mountpoint ]] ; then
-    echo "mounted dmg image: 'vulkan_sdk.dmg' (mountpoint=$mountpoint)" >&2
+  test -d $VULKAN_SDK && test -f vulkan_sdk.zip
+  unzip vulkan_sdk.zip
+  if [[ -d InstallVulkan-${VULKAN_SDK_VERSION}.app/Contents ]] ; then
+    echo "recognized zip layout! 'vulkan_sdk.zip' InstallVulkan-${VULKAN_SDK_VERSION}.app/Contents" >&2
   else
-    echo "could not mount dmg image: vulkan_sdk.dmg (mountpoint=$mountpoint)" >&2
-    file vulkan_sdk.dmg
-    unzip -t vulkan_sdk.dmg
+    echo "unrecognized zip/layout: vulkan_sdk.zip" >&2
+    file vulkan_sdk.zip
+    unzip -t vulkan_sdk.zip
     exit 7
   fi
-  local sdk_temp=$mountpoint
-  # > Vulkan SDK 1.2.170.0 .dmgs have an installer
-  if [[ -d $mountpoint/InstallVulkan.app ]] ; then
-    sdk_temp=$VULKAN_SDK.tmp
-    sudo $mountpoint/InstallVulkan.app/Contents/MacOS/InstallVulkan --root "$sdk_temp" --accept-licenses --default-answer --confirm-command install
-  else
-    true # <= 1.2.170.0 .dmgs are just packaged folders
-  fi
+  local sdk_tmp=$VULKAN_SDK.tmp
+  sudo InstallVulkan-${VULKAN_SDK_VERSION}.app/ContentsContents/MacOS/InstallVulkan-${VULKAN_SDK_VERSION} --root "$sdk_temp" --accept-licenses --default-answer --confirm-command install
   du -hs $sdk_temp
   test -d $sdk_temp/macOS || { echo "unrecognized dmg folder layout: $sdk_temp" ; ls -l $sdk_temp ; exit 10 ; }
   cp -r $sdk_temp/macOS/* $VULKAN_SDK/
-  if [[ -d $mountpoint/InstallVulkan.app ]] ; then
+  if [[ -d InstallVulkan.app/Contents ]] ; then
     sudo rm -rf "$sdk_temp"
+    rm -rf InstallVulkan-${VULKAN_SDK_VERSION}.app
   fi
-  hdiutil detach $mountpoint
 }
