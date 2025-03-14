@@ -53,21 +53,25 @@ function install_windows() {
 function install_mac() {
   test -d $VULKAN_SDK && test -f vulkan_sdk.zip
   unzip vulkan_sdk.zip
+  local InstallVulkan
   if [[ -d InstallVulkan-${VULKAN_SDK_VERSION}.app/Contents ]] ; then
-    echo "recognized zip layout! 'vulkan_sdk.zip' InstallVulkan-${VULKAN_SDK_VERSION}.app/Contents" >&2
+    InstallVulkan=InstallVulkan-${VULKAN_SDK_VERSION}
+  elif [[ -d InstallVulkan.app/Contents ]] ; then
+    InstallVulkan=InstallVulkan
   else
     echo "unrecognized zip/layout: vulkan_sdk.zip" >&2
     file vulkan_sdk.zip
     unzip -t vulkan_sdk.zip
     exit 7
   fi
+  echo "recognized zip layout 'vulkan_sdk.zip' ${InstallVulkan}.app/Contents" >&2
   local sdk_temp=${VULKAN_SDK}.tmp
-  sudo InstallVulkan-${VULKAN_SDK_VERSION}.app/Contents/MacOS/InstallVulkan-${VULKAN_SDK_VERSION} --root "$sdk_temp" --accept-licenses --default-answer --confirm-command install
+  sudo ${InstallVulkan}.app/Contents/MacOS/${InstallVulkan} --root "$sdk_temp" --accept-licenses --default-answer --confirm-command install
   du -hs $sdk_temp
   test -d $sdk_temp/macOS || { echo "unrecognized dmg folder layout: $sdk_temp" ; ls -l $sdk_temp ; exit 10 ; }
   cp -r $sdk_temp/macOS/* $VULKAN_SDK/
-  if [[ -d InstallVulkan.app/Contents ]] ; then
+  if [[ -d ${InstallVulkan}.app/Contents ]] ; then
     sudo rm -rf "$sdk_temp"
-    rm -rf InstallVulkan-${VULKAN_SDK_VERSION}.app
+    rm -rf ${InstallVulkan}.app
   fi
 }
