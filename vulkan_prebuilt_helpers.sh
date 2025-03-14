@@ -12,6 +12,7 @@ function _os_filename() {
   case $1 in
     mac) echo vulkan_sdk.dmg ;;
     linux) echo vulkan_sdk.tar.gz ;;
+    linux-arm) echo vulkansdk-linux-arm64-$RUNNER_OS-$VULKAN_SDK_VERSION.zip ;;
     windows) echo vulkan_sdk.exe ;;
     *) echo "unknown $1" >&2 ; exit 9 ;;
   esac
@@ -19,17 +20,23 @@ function _os_filename() {
 
 function download_vulkan_installer() {
   local os=$1
-  local filename=$(_os_filename $os)
-  local url=https://sdk.lunarg.com/sdk/download/$VULKAN_SDK_VERSION/$os/$filename?Human=true
-  echo "_download_os_installer $os $filename $url" >&2
-  if [[ -f $filename ]] ; then
-    echo "using cached: $filename" >&2
+  if [[ "$os" == "linux" && "${{ inputs.use_arm_artifact }}" == "true" ]]; then
+    os="linux-arm"
+    echo "Downloading ARM artifact for version $VULKAN_SDK_VERSION"
+    gh run download --pattern "vulkansdk-linux-arm64-$RUNNER_OS-$VULKAN_SDK_VERSION.zip"
+    unzip vulkansdk-linux-arm64-$RUNNER_OS-$VULKAN_SDK_VERSION.zip -d $VULKAN_SDK
   else
-    curl --fail-with-body -s -L -o ${filename}.tmp $url || { echo "curl failed with error code: $?" >&2 ; curl -s -L --head $url >&2 ; exit 32 ; }
-    test -f ${filename}.tmp
-    mv -v ${filename}.tmp ${filename} 
-  fi
-  ls -lh $filename >&2
+    local filename=$(_os_filename $os)
+    local url=https://sdk.lunarg.com/sdk/download/$VULKAN_SDK_VERSION/$os/$filename?Human=true
+    echo "_download_os_installer $os $filename $url" >&2
+    if [[ -f $filename ]] ; then
+      echo "using cached: $filename" >&2
+    else
+      curl --fail-with-body -s -L -o ${filename}.tmp $url || { echo "curl failed with error code: $?" >&2 ; curl -s -L --head $url >&2 ; exit 32 ; }
+      test -f ${filename}.tmp
+      mv -v ${filename}.tmp ${filename}
+    fi
+    ls -lh $filename >&2
 }
 
 function unpack_vulkan_installer() {
