@@ -75,7 +75,8 @@ jobs:
           dir .\tests\build\test_vulkan.exe
           echo testing...
           set PATH=%PATH%;%VULKAN_SDK%/Bin
-          .\tests\build\test_vulkan || true || exit /b 4
+          .\tests\build\test_vulkan || exit /b 4
+          echo //testing
 
   test-prebuilt-linux:
     if: ${{ contains(github.event.inputs.extra_tests, 'prebuilt-linux') }}

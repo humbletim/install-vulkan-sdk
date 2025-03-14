@@ -8,11 +8,11 @@ int main(int argc, char** argv) {
   if(vkEnumerateInstanceVersion) {
       vkEnumerateInstanceVersion(&version);
   } else {
-      fprintf(stderr, "vkGetInstanceProcAddr (%p) lookup of vkEnumerateInstanceVersion failed...\n", vkEnumerateInstanceVersion);
+      fprintf(stderr, "[test_vulkan.c] vkGetInstanceProcAddr (%p) lookup of vkEnumerateInstanceVersion failed...\n", vkEnumerateInstanceVersion);
       return 1;
   }
 
-  printf("Vulkan Version: (%u) %d.%d.%d\n", version,
+  printf("[test_vulkan.c] Vulkan Version: (%u) %d.%d.%d\n", version,
     VK_VERSION_MAJOR(version),
     VK_VERSION_MINOR(version),
     VK_VERSION_PATCH(version)
