@@ -1,4 +1,4 @@
-# install-vulkan-sdk v1.1.2
+# install-vulkan-sdk v1.2
 
 This action automatically downloads and installs the Vulkan SDK development environment.
 
@@ -6,7 +6,7 @@ This action automatically downloads and installs the Vulkan SDK development envi
 
 ```yaml
   -name: Install Vulkan SDK
-   uses: humbletim/install-vulkan-sdk@v1.1.2
+   uses: humbletim/install-vulkan-sdk@v1.2
    with:
      version: 1.4.309.0
      cache: true
