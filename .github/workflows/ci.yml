@@ -123,7 +123,7 @@ jobs:
           version: ${{ fromJSON(github.event.inputs.versions)[0] }}
           cache: false
       - name: Setup tmate session
-        if: ${{ contains(github.event.inputs.extra_tests, 'tmate-after') }}
+        if: failure() || ${{ contains(github.event.inputs.extra_tests, 'tmate-after') }}
         uses: mxschmitt/action-tmate@v3.9
         with:
           limit-access-to-actor: true
