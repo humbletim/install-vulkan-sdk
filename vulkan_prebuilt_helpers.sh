@@ -56,11 +56,15 @@ function install_mac() {
   local InstallVulkan
   if [[ -d InstallVulkan-${VULKAN_SDK_VERSION}.app/Contents ]] ; then
     InstallVulkan=InstallVulkan-${VULKAN_SDK_VERSION}
+  elif [[ -d vulkansdk-macOS-${VULKAN_SDK_VERSION}.app/Contents ]] ; then
+    InstallVulkan=vulkansdk-macOS-${VULKAN_SDK_VERSION}
   elif [[ -d InstallVulkan.app/Contents ]] ; then
     InstallVulkan=InstallVulkan
   else
-    echo "unrecognized zip/layout: vulkan_sdk.zip" >&2
+    echo "expecting ..vulkan.app/Contents folder (perhaps lunarg changed the archive layout again?): vulkan_sdk.zip" >&2
+    echo "file vulkan_sdk.zip" >&2
     file vulkan_sdk.zip
+    echo "unzip -t vulkan_sdk.zip" >&2
     unzip -t vulkan_sdk.zip
     exit 7
   fi
