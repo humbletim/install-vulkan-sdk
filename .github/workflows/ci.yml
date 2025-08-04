@@ -119,11 +119,12 @@ jobs:
         with:
           limit-access-to-actor: true
       - uses: ./
+        id: composit      
         with:
           version: ${{ fromJSON(github.event.inputs.versions)[0] }}
           cache: false
       - name: Setup tmate session
-        if: failure() || ${{ contains(github.event.inputs.extra_tests, 'tmate-after') }}
+        if: steps.composite.outcome != 'success' || failure() || ${{ contains(github.event.inputs.extra_tests, 'tmate-after') }}
         uses: mxschmitt/action-tmate@v3.9
         with:
           limit-access-to-actor: true
@@ -147,3 +148,8 @@ jobs:
           cmake -B tests/build -S tests -DCMAKE_BUILD_TYPE=Release -DCMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE=.
           cmake --build tests/build --config release
           ./tests/build/test_vulkan
+      - name: Setup tmate session on failure
+        if: failure()
+        uses: mxschmitt/action-tmate@v3.9
+        with:
+          limit-access-to-actor: true
