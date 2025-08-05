@@ -45,9 +45,34 @@ function install_linux() {
   tar -C "$VULKAN_SDK" --strip-components 2 -xf vulkan_sdk.tar.gz $VULKAN_SDK_VERSION/x86_64
 }
 
+# newer SDK installers apparently need to be executed (7z only sees Bin/)
+function _install_windows_qt() {
+  test -d $VULKAN_SDK && test -f vulkan_sdk.exe
+  echo "Executing Vulkan SDK installer headlessly to $VULKAN_SDK..." >&2
+  ./vulkan_sdk.exe --root "$VULKAN_SDK" --accept-licenses --default-answer --confirm-command install
+}
+# older SDK installers could be reliably extracteed via 7z.exe
+function _install_windows_7z() {
+  test -d $VULKAN_SDK && test -f vulkan_sdk.exe
+  echo "Using 7z to unpack Vulkan SDK installer headlessly to $VULKAN_SDK..." >&2
+  7z x vulkan_sdk.exe -aoa -o$VULKAN_SDK
+}
+# FIXME: to avoid breaking those using "older" SDKs this checks 7z viability
+#   and delegates accordingly
 function install_windows() {
   test -d $VULKAN_SDK && test -f vulkan_sdk.exe
-  7z x vulkan_sdk.exe -aoa -o$VULKAN_SDK
+  if 7z l vulkan_sdk.exe | grep Include/ >/dev/null ; then
+    _install_windows_7z
+  else
+    _install_windows_qt
+  fi
+  # Verify that the installation was successful by checking for a key directory
+  if [ ! -d "$VULKAN_SDK/Include" ]; then
+    echo "Installer did not create the expected Include directory." >&2
+    # You can add more detailed logging here, like listing the contents of VULKAN_SDK
+    ls -l "$VULKAN_SDK" >&2
+    exit 1
+  fi
 }
 
 function install_mac() {

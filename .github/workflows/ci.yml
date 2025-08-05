@@ -50,6 +50,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: ./
+        id: composite
         with:
           version: ${{ fromJSON(github.event.inputs.versions)[0] }}
           cache: false
@@ -75,7 +76,13 @@ jobs:
           dir .\tests\build\test_vulkan.exe
           echo testing...
           set PATH=%PATH%;%VULKAN_SDK%/Bin
-          .\tests\build\test_vulkan || echo COMPILE TEST ONLY COULD NOT RUN || exit /b 4           
+          .\tests\build\test_vulkan || echo COMPILE TEST ONLY COULD NOT RUN || exit /b 4
+      - name: Setup tmate session on failure
+        if: failure()
+        uses: mxschmitt/action-tmate@v3.9
+        with:
+          limit-access-to-actor: true
+
 
   test-prebuilt-linux:
     if: ${{ contains(github.event.inputs.extra_tests, 'prebuilt-linux') }}
