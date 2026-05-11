@@ -17,6 +17,16 @@ function _os_filename() {
   esac
 }
 
+function _version_ge() {
+  local IFS=.
+  local i v1=($1) v2=($2)
+  for ((i=0; i<${#v1[@]} || i<${#v2[@]}; i++)); do
+    if (( ${v1[i]:-0} > ${v2[i]:-0} )); then return 0; fi
+    if (( ${v1[i]:-0} < ${v2[i]:-0} )); then return 1; fi
+  done
+  return 0
+}
+
 function download_vulkan_installer() {
   local os=$1
   local filename=$(_os_filename $os)
@@ -46,8 +56,14 @@ function install_linux() {
 }
 
 function install_windows() {
-  test -d $VULKAN_SDK && test -f vulkan_sdk.exe
-  7z x vulkan_sdk.exe -aoa -o$VULKAN_SDK
+  test -d "$VULKAN_SDK" && test -f vulkan_sdk.exe
+  if _version_ge "$VULKAN_SDK_VERSION" "1.4.313.0" ; then
+    echo "installing via installer command-line (version >= 1.4.313.0)" >&2
+    ./vulkan_sdk.exe --root "$VULKAN_SDK" --accept-licenses --default-answer --confirm-command install
+  else
+    echo "installing via 7z extraction (version < 1.4.313.0)" >&2
+    7z x vulkan_sdk.exe -aoa -o"$VULKAN_SDK"
+  fi
 }
 
 function install_mac() {
