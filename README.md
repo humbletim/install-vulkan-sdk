@@ -23,7 +23,7 @@ Know working SDK version for windows/mac/linux:
 - 1.4.309.0
 
 ##### Available SDK versions:
-  - [windows.json](https://vulkan.lunarg.com/sdk/versions/windows.json)
+  - [windows.json](https://vulkan.lunarg.com/sdk/versions/windows.json) / [warm.json](https://vulkan.lunarg.com/sdk/versions/warm.json)
   - [linux.json](https://vulkan.lunarg.com/sdk/versions/linux.json)
   - [mac.json](https://vulkan.lunarg.com/sdk/versions/mac.json) (version >= 1.3.296.0)
   - see also https://vulkan.lunarg.com/sdk/home

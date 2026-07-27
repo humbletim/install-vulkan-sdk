@@ -25,10 +25,16 @@ runs:
         # preset env
         basedir=$PWD
         runner_os=${RUNNER_OS:-`uname -s`}
+        runner_arch=${RUNNER_ARCH:-`uname -m`}
         case $runner_os in
           macOS|Darwin) os=mac ;;
           Linux) os=linux ;;
-          Windows|MINGW*) os=windows ; basedir=$(pwd -W) ;;
+          Windows|MINGW*)
+            case $runner_arch in
+              X64|x86_64) os=windows ;;
+              ARM64|aarch64) os=warm ;;
+              *) echo "unknown runner_arch: $runner_arch" ; exit 7 ; ;;
+            esac ; basedir=$(pwd -W) ;;
           *) echo "unknown runner_os: $runner_os" ; exit 7 ; ;;
         esac
         version=${VULKAN_SDK_VERSION:-${{ inputs.version }}}
@@ -53,7 +59,7 @@ runs:
       uses: actions/cache@v4
       with:
         path: vulkan_sdk.*
-        key: ${{ runner.os }}-vulkan-prebuilt-sdk-${{ inputs.cache }}-${{ env.VULKAN_SDK_VERSION }}
+        key: ${{ env.VULKAN_SDK_PLATFORM }}-vulkan-prebuilt-sdk-${{ inputs.cache }}-${{ env.VULKAN_SDK_VERSION }}
 
     - name: Download Vulkan SDK
       shell: bash

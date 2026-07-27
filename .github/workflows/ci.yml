@@ -14,7 +14,7 @@ on:
         oses:
           description: 'Matrix OSes'
           required: true
-          default: '[ "ubuntu-latest", "windows-latest", "macos-latest" ]'
+          default: '[ "ubuntu-latest", "windows-latest", "macos-latest", "windows-11-arm" ]'
         quiet:
           description: 'silence annotation'
           required: false
@@ -46,7 +46,10 @@ jobs:
 
   test-prebuilt-windows:
     if: ${{ contains(github.event.inputs.extra_tests, 'prebuilt-windows') }}
-    runs-on: windows-latest
+    strategy:
+      matrix:
+        os: [windows-latest, windows-11-arm]
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
       - uses: ./
